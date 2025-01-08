@@ -1,8 +1,3 @@
-# AI-power-data-analyisis-tool
-a powerful data analysis and visualization platform built with Django. It provides various features such as data cleaning, reporting, insights generation, code generation, and custom analysis, all integrated into a user-friendly dashboard. This tool is designed for individuals and organizations looking to gain valuable insights,
-
-
-
 # AI-power-data-analysis-tool
 
 **AI-power-data-analysis-tool** is a powerful data analysis and visualization platform built with Django. It provides various features such as data cleaning, reporting, insights generation, code generation, and custom analysis, all integrated into a user-friendly dashboard. This tool is designed for individuals and organizations looking to gain valuable insights from their data, automate analysis processes, and generate visualizations for better decision-making.
@@ -55,6 +50,55 @@ Follow these steps to get your development environment set up and run the projec
 
 
 
+Create a virtual environment
+
+bash
+Copy code
+python -m venv venv
+source venv/bin/activate  # On Windows use venv\Scripts\activate
+Install dependencies
+
+bash
+Copy code
+pip install -r requirements.txt
+Set up the database
+
+Run migrations to set up the database tables:
+
+bash
+Copy code
+python manage.py migrate
+Create a superuser
+
+Create an admin user to access the admin panel:
+
+bash
+Copy code
+python manage.py createsuperuser
+Run the server
+
+Start the Django development server:
+
+bash
+Copy code
+python manage.py runserver
+Access the application
+
+Open your browser and go to http://127.0.0.1:8000/ to access the app. The admin panel can be accessed at http://127.0.0.1:8000/admin/.
+
+API Endpoints
+Data Analysis
+/data_query/: Perform data queries for analysis.
+/updata/: Automatically update data.
+/api/task-status/<uuid:task_id>/: Check the status of a task.
+/insights/: Generate insights from the data.
+/code_generation/: Generate code based on analysis.
+Reporting
+/reports/: View and generate reports.
+/export/: Export data and reports.
+User Profile & Settings
+/userprofile/: View and edit user profile.
+/user_settings/: Update user preferences.
 
 
 
