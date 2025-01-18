@@ -1,51 +1,95 @@
 # Standard library imports
+import os
+import re
 import csv
 import json
 import logging
-import os
-import re
+import io
+import base64
+import traceback
 from datetime import datetime
 from pathlib import Path
-import traceback
+from uuid import UUID
+from celery.result import AsyncResult
 
+# Data science and machine learning imports
+import numpy as np
+import pandas as pd
+import pyreadstat
+import matplotlib
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.express as px
+import plotly.graph_objects as go
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
-import sklearn
-from sklearn.metrics import accuracy_score
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
-
-
-
-
-# Third-party library imports
-import chardet
-import matplotlib.pyplot as plt
-import numpy as np
+# Third-party libraries
 import openai
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
-import pyreadstat
-import seaborn as sns
+import chardet
 from fuzzywuzzy import process
 from pandera import Column, DataFrameSchema
 from pygments import highlight
-from pygments.formatters import HtmlFormatter
 from pygments.lexers import PythonLexer
+from pygments.formatters import HtmlFormatter
+from dotenv import load_dotenv
 
-# Django imports
+# Django framework imports
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
-from django.http import HttpResponseForbidden, JsonResponse
+from django.db.models import Q
+from django.http import JsonResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
-from dotenv import load_dotenv
-# Local module imports
+
+# Local application imports
 from .forms import DataUploadForm
-from .models import Ai_generated_code, ErrorLog, UserFile, UserProfile, UserloadedFile
+from .models import (
+    Ai_generated_code,
+    ChatMessage,
+    ErrorLog,
+    UserFile,
+    UserProfile,
+    UserloadedFile,
+)
+from .tasks import process_user_query  # Celery task
+
+# Ensure matplotlib compatibility in some environments
+matplotlib.use("Agg")
+
+# Additional imports for data handling
+from io import BytesIO
+import openai
+from django.core.cache import cache
+from django.shortcuts import render
+from django.http import JsonResponse
+
+# UUID and path handling
+from pathlib import Path
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from .models import UserFile
+import pandas as pd
+import pyreadstat
+import csv
+
+# Handling of chat messages, error logs, and JSON data
+from .models import ChatMessage, ErrorLog
+from io import BytesIO
+import matplotlib
+import matplotlib.pyplot as plt
+import json
+
+
+
+
+MAX_ATTEMPTS = 3
+import logging
+logger = logging.getLogger(__name__)
 
 # Configure logging
 logging.basicConfig(level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -462,44 +506,6 @@ def return_dataframe(user):
     except Exception as e:
         raise ValueError(f"Error loading file: {str(e)}")
 
-from pathlib import Path
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-from .models import UserFile
-import pandas as pd
-import pyreadstat
-import csv
-
-
-from .models import ChatMessage, ErrorLog
-from io import BytesIO
-import matplotlib
-import matplotlib.pyplot as plt
-import json
-
-from django.conf import settings
-# Set the Matplotlib backend to Agg to avoid threading issues in Django
-matplotlib.use('Agg')
-
-import base64
-from io import BytesIO
-import matplotlib.pyplot as plt
-
-MAX_ATTEMPTS = 3
-
-from django.core.cache import cache
-import openai
-from markdown import markdown
-from pygments.formatters import HtmlFormatter
-
-import logging
-from django.shortcuts import render
-from django.core.cache import cache  # Importing Django's cache framework
-from django.http import JsonResponse
-
-# Set up logging
-logger = logging.getLogger(__name__)
-
 def fetch_user_messages(request):
     """Helper function to retrieve user messages."""
     if request.user.is_authenticated:
@@ -571,37 +577,6 @@ def set_cache_response(cache_key, data, timeout=60*15):
     cache.set(cache_key, data, timeout)
 
 
-import matplotlib.pyplot as plt
-import io
-import base64
-
-
-from django.http import JsonResponse
-import io
-
-
-import base64
-import matplotlib.pyplot as plt
-
-
-from django.http import JsonResponse
-from django.shortcuts import render
-
-#this is the main view
-
-from django.shortcuts import render
-from django.http import JsonResponse
-import openai
-import traceback
-import logging
-import io
-import base64
-from .models import ChatMessage
-from django.core.cache import cache
-
-from django.shortcuts import render
-from .tasks import process_user_query  # Import your Celery task
-
 
 
 #this is the real view
@@ -666,9 +641,7 @@ def data_query(request):
     return render(request, 'Dataspy/data_query1.html', context)
 
 
-from django.http import JsonResponse
-from .models import ChatMessage
-from django.db.models import Q
+
 def auto_updata(request):
     user_message = None
     # Check if the user is authenticated
@@ -688,11 +661,6 @@ def auto_updata(request):
     })
 
 
-from celery.result import AsyncResult
-from django.http import JsonResponse
-
-import logging
-from uuid import UUID
 
 def task_status(request, task_id):
     if isinstance(task_id, UUID):
@@ -738,8 +706,7 @@ def get_ai_fix_suggestion(error_message):
         return "AI service quota exceeded. Please check OpenAI billing details."
 
 
-import csv
-import pandas as pd
+
 
 def try_reading_with_delimiters(file_path, encoding, error_messages):
     """
@@ -842,9 +809,6 @@ def convert_datetime_to_string(obj):
     return obj
 
 
-
-# Helper functions (e.g., for encoding detection, delimiter detection, etc.)
-# You should define the required helper functions here (e.g., detect_file_encoding, try_reading_with_delimiters, get_ai_summary)
 
 def display_spread_sheet(request):
     # Get all user files for the logged-in user
