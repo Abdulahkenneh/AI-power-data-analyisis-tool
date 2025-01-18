@@ -1,0 +1,85 @@
+{% extends 'Dataspy/base.html' %}
+{% block title %}Register | {% endblock %}
+
+
+{% block content %}
+  <div style='margin-top:6rem !important'>
+    <div class="container-fluid d-flex justify-content-center align-items-center min-vh-60 mt-5" style='margin-top:4rem'>
+        <div class="col col-md-8 col-lg-6 col-xl-6 col-12">
+            <h1 class="text-primary">Register</h1>
+            <form method="post" class="mt-4">
+                {% csrf_token %}
+
+                <!-- Display Form Errors -->
+                {% if form.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <strong>Error:</strong> Please correct the following errors.
+                        <ul>
+                            {% for field, error_list in form.errors.items %}
+                                {% for error in error_list %}
+                                    <li>{{ field|title }}: {{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+
+                <!-- Username Field with Icon -->
+                <div class="form-group">
+                    <label for="id_username">Username</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" style='height:38px'>
+                                <i class="fa fa-user" style="color:dodgerblue;width:50px"></i>
+                            </span>
+                        </div>
+                        {{ form.username }}
+                    </div>
+                </div>
+
+                <!-- Email Field with Icon -->
+                <div class="form-group">
+                    <label for="id_email">Email</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" style='height:38px'>
+                                <i class="fa fa-envelope" style="color: dodgerblue;min-width:50px"></i>
+                            </span>
+                        </div>
+                        {{ form.email}}
+                    </div>
+                </div>
+
+                <!-- Password Field with Icon -->
+                <div class="form-group">
+                    <label for="id_password1">Password</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" style='height:38px'>
+                                <i class="fa fa-lock" style="color: dodgerblue;min-width:50px"></i>
+                            </span>
+                        </div>
+                        {{ form.password1 }}
+                    </div>
+                </div>
+
+                <!-- Confirm Password Field with Icon -->
+                <div class="form-group">
+                    <label for="id_password2">Confirm Password</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" style='height:38px'>
+                                <i class="fa fa-lock" style="color: dodgerblue;min-width:50px"></i>
+                            </span>
+                        </div>
+                        {{ form.password2 }}
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary btn-block mb-5">Register</button>
+            </form>
+        </div>
+    </div>
+    </div>
+{% endblock %}

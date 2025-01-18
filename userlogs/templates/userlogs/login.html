@@ -1,0 +1,86 @@
+
+{% extends 'Dataspy/base.html' %}
+{% block title %}Login | {% endblock %}
+
+
+{% block content %}
+  <div style='margin-top:6rem !important'>
+    <div class="container-fluid d-flex justify-content-center align-items-center min-vh-60 mb-5" >
+        <div class="col col-md-8 col-lg-6 col-xl-6 col-12">
+            <h1 class="text-primary">Login</h1>
+            <form method="post" class="mt-4">
+                {% csrf_token %}
+
+                <!-- Username Field with Icon -->
+                <div class="form-group">
+                    <label for="id_username">Username or Email</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" style='height:38px'>
+                                <i class="fa fa-envelope" style="color: dodgerblue;min-width:50px"></i>
+                            </span>
+                        </div>
+                        {{ form.username}}
+                    </div>
+                </div>
+
+                <!-- Password Field with Icon -->
+                <div class="form-group">
+                    <label for="id_password">Password</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" style='height:38px'>
+                                <i class="fa fa-lock" style="color: dodgerblue;min-width:50px"></i>
+                            </span>
+                        </div>
+                        {{ form.password }}
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary">Login</button>
+                or <a href="{% url 'userlogs:register' %}">-->Register</a>
+
+
+
+
+
+
+
+
+                <!-- Display Non-field Errors -->
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger mt-3" role="alert">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+    </div>
+
+    <style>
+        .alert-info {
+    background-color: #e7f3fe;
+    border-left: 5px solid #2196F3;
+}
+
+.btn-primary {
+    background-color: #4285F4;
+    border: none;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #3367D6;
+}
+
+.fab.fa-google {
+    color: white;
+}
+
+    </style>
+{% endblock %}'
+
