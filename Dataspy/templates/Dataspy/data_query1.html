@@ -1,0 +1,453 @@
+{% extends 'Dataspy/userprofile.html' %}
+{% load static %}
+
+{% block section %}
+<style>
+    body{
+
+    }
+    /* General Container Styles */
+    .chat-container {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        overflow-y: auto; /* Enable scrolling */
+        scroll-behavior: smooth; /* Smooth scrolling */
+    }
+
+    .message {
+        border-radius: 8px;
+        font-size: 1rem;
+        line-height: 1.6;
+
+    }
+
+    .user-message {
+        text-align: right;
+        margin-left: auto;
+        margin-bottom: 10px;
+    }
+
+    .message-text {
+        background: #ececec;
+        display: inline-block;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 1rem;
+        line-height: 1.5;
+        max-width: 80%;  /* Adjust width of message */
+    }
+
+    .chatgpt-message {
+        text-align: left;
+        margin-right: auto;
+        border-top-left-radius: 0;
+    }
+
+    .task-status-container {
+        margin-top: 20px;
+        padding: 20px;
+        background-color: #fff8e1;
+        border-left: 5px solid #ffc107;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        color: #ff8f00;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .task-result {
+        margin-top: 10px;
+        padding: 15px;
+        background-color: #e8f5e9;
+        border-left: 5px solid #66bb6a;
+        border-radius: 8px;
+        color: #388e3c;
+    }
+
+
+    @media (max-width: 768px) {
+        .input-container {
+            flex-direction: column;
+        }
+    }
+
+    /* For syntax highlighting */
+    pre code {
+        background-color: #f5f5f5;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 1rem;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+
+    .user-request {
+        text-align: right;
+        font-weight: bold;
+    }
+
+    .ai-response {
+        text-align: left;
+    }
+
+.plotly-container {
+    max-width: 100%;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: auto;
+
+
+
+
+}
+
+.plot {
+    position: fixed;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+#plot-toggle {
+    padding: 10px 20px;
+    background-color: #3498db;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+    transition: all 0.3s ease;
+}
+
+#plot-toggle:hover {
+    background-color: #2980b9;
+    box-shadow: 0 0 20px rgba(52, 152, 219, 0.8);
+    transform: scale(1.1);
+}
+
+
+    .dropdown-content {
+        display: none;
+        background-color: #fff;
+        padding: 10px;
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        opacity: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.5s ease-in-out;
+    }
+
+    .dropdown-content.show {
+        display: block;
+        opacity: 1;
+        max-height: 500px;
+    }
+
+    .dropdown-header {
+        cursor: pointer;
+        background-color: #007bff;
+        color: white;
+        font-size: 1.2rem;
+        font-weight: 500;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+
+
+
+
+    /* From Uiverse.io by satyamchaudharydev */
+/* From uiverse.io by @satyamchaudharydev */
+/* removing default style of button */
+
+.form button {
+  border: none;
+  background: none;
+  color: #8b8ba7;
+}
+/* styling of whole input container */
+.form {
+  --timing: 0.3s;
+  --width-of-input: 450%;
+  --height-of-input: 40px;
+  --border-height: 2px;
+  --input-bg: #fff;
+  --border-color: #2f2ee9;
+  --border-radius: 30px;
+  --after-border-radius: 1px;
+  position: absolute;
+  widjth: var(--width-of-input);
+  height: var(--height-of-input);
+  display: flex;
+  align-items: center;
+  align-items: center;
+  padding-inline: 0.8em;
+  border-radius: var(--border-radius);
+  transition: border-radius 0.5s ease;
+  background: var(--input-bg,#fff);
+  bottom:0;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+/* styling of Input */
+.input {
+  font-size: 0.9rem;
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  padding-inline: 0.5em;
+  padding-block: 0.7em;
+  border: none;
+
+}
+/* styling of animated border */
+.form:before {
+  content: "";
+  position: absolute;
+  background: var(--border-color);
+  transform: scaleX(0);
+  transform-origin: center;
+  width: 100%;
+  height: var(--border-height);
+  left: 0;
+  bottom: 0;
+  border-radius: 1px;
+  transition: transform var(--timing) ease;
+}
+/* Hover on Input */
+.form:focus-within {
+  border-radius: var(--after-border-radius);
+}
+
+
+input:focus {
+  outline: none;
+}
+/* here is code of animated border */
+.form:focus-within:before {
+  transform: scale(1);
+}
+/* styling of close button */
+/* == you can click the close button to remove text == */
+.reset {
+  border: none;
+  background: none;
+  opacity: 0;
+  visibility: hidden;
+}
+/* close button shown when typing */
+input:not(:placeholder-shown) ~ .reset {
+  opacity: 1;
+  visibility: visible;
+}
+/* sizing svg icons */
+.form svg {
+  width: 17px;
+  margin-top: 3px;
+}
+</style>
+
+
+
+
+<div style="width:100%;display: block;; justify-content: center; align-items: center;min-height: 100vh;margin-bottom:50px;osition:;">
+
+
+    <div id="task-status-container" class="task-status-container" style="display: none; height:30px">
+    <p>Task Status: <span id="task-status">Checking...</span></p>
+    <div id="task-result" class="task-result" style="display: none;">
+        <p id="typed-content"></p>
+    </div>
+</div>
+
+
+
+<!-- Chat Container -->
+<div class="chat-container" id="chat-container">
+    {% for message in messages %}
+        <div class="message" id="message-{{ message.id }}">
+            <!-- User Message -->
+            <div class="user-message">
+                <p class="message-text">{{ message.user_request|safe }}</p>
+            </div>
+            <!-- AI Response -->
+            {% if message.ai_response and not message.code %}
+                <div class="chatgpt-message">
+                    <p>{{ message.ai_response|safe }}</p>
+                </div>
+            {% endif %}
+            <!-- Code Snippet -->
+            {% if message.code %}
+                <div class="ai-response">
+                    <p><strong>Let's run this code:</strong></p>
+                    <pre><code class="language-python">{{ message.code }}</code></pre>
+                </div>
+            {% endif %}
+            <!-- Plotly Chart -->
+
+
+            <!-- Matplotlib Chart -->
+            {% if message.matplot %}
+                <div id="matplot-plot-{{ message.id }}">
+                    <img src="data:image/png;base64,{{ message.matplot }}" alt="Matplotlib Plot">
+                </div>
+            {% endif %}
+        </div>
+
+    {% endfor %}
+
+
+</div>
+</div>
+
+
+
+
+<!-- Input Form -->
+<div class="plot" stylje="position: absolute; left: 50%; transform: translateX(-50%);">
+    {% if last_plot_message and last_plot_message.plotly %}
+
+    <div id="plotly-plot" class="plotly-container" style="display: none;overflow:auto;max-width:100%">
+        {{ last_plot_message.plotly|safe }}
+    </div>
+     <button id="plot-toggle" class="btn-info" style="margin:0">
+        Show/Hide Plot
+    </button>
+    {% endif %}
+</div>
+
+  <form method="post" class="form" style="width:60%;margin-bottom:20px" action="{% url 'Dataspy:data_query' %}">
+
+       {% csrf_token %}
+      <button>
+          <svg width="17" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="search">
+              <path d="M7.667 12.667A5.333 5.333 0 107.667 2a5.333 5.333 0 000 10.667zM14.334 14l-2.9-2.9" stroke="currentColor" stroke-width="1.333" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+      </button>
+      <input class="input" placeholder="Type your text" required="" type="text" name="prompt">
+      <button class="reset" type="reset">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+      </button>
+  </form>
+
+<script>
+    $(document).ready(function () {
+        const chatContainer = document.getElementById('chat-container');
+        let isUserScrolling = false;
+
+        chatContainer.addEventListener('scroll', () => {
+            isUserScrolling = chatContainer.scrollTop < (chatContainer.scrollHeight - chatContainer.offsetHeight - 10);
+        });
+
+        const reloadMessages = () => {
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'Dataspy:update' %}?_=" + new Date().getTime(),
+                success: (response) => {
+                    if (response.messages?.length) {
+                        $("#chat-container").empty();
+                        response.messages.forEach((message) => {
+                            const messageHtml = `
+                                <div class="message" id="message-${message.id}">
+                                    <div class="user-message">
+                                        <p class="message-text">${$('<div>').text(message.user_request).html()}</p>
+                                    </div>
+                                    ${
+                                        message.ai_response && !message.code
+                                            ? `<div class="chatgpt-message">
+                                                   <p>${$('<div>').text(message.ai_response).html()}</p>
+                                               </div>`
+                                            : message.code
+                                            ? `<div class="ai-response">
+                                                   <p><strong>Let’s run this code:</strong></p>
+                                                   <pre class="language-python"><code>${$('<div>').text(message.code).html()}</code></pre>
+                                               </div>`
+                                            : ''
+                                    }
+                                </div>`;
+                            $("#chat-container").append(messageHtml);
+                        });
+
+                        // Apply Prism syntax highlighting after new content is added
+                        Prism.highlightAll(); // Highlight newly added code blocks
+
+                        // Scroll to the bottom after adding new messages if the user is not manually scrolling
+                        if (!isUserScrolling) {
+                            chatContainer.scrollTop = chatContainer.scrollHeight;
+                        }
+                    } else {
+                        console.log("No messages found.");
+                    }
+                },
+                error: (xhr, status, error) => {
+                    console.error("Error reloading messages:", status, error);
+
+                }
+            });
+        };
+
+        // Reload messages every 3 seconds
+        setInterval(reloadMessages, 3000);
+    });
+
+
+
+
+   function toggleDropdown() {
+    const dropdownContent = document.querySelector('.dropdown-content');
+    const plotlyPlot = document.getElementById('plotly-plot');
+    const isVisible = dropdownContent.classList.contains('show');
+    dropdownContent.classList.toggle('show', !isVisible);
+
+    if (isVisible) {
+        plotlyPlot.style.display = 'none';
+    } else {
+        plotlyPlot.style.display = 'block';
+        // Ensure the plot is fully loaded before displaying
+        setTimeout(() => {
+            plotlyPlot.style.opacity = 1;
+        }, 10);
+    }
+}
+
+
+    function toggleDropdown() {
+        const dropdownContent = document.querySelector('.dropdown-content');
+        const isVisible = dropdownContent.classList.contains('show');
+        dropdownContent.classList.toggle('show', !isVisible);
+    }
+
+
+      document.addEventListener('DOMContentLoaded', function () {
+        // Initialize Tippy.js
+        tippy('#plot-toggle', {
+            content: 'Click to toggle the plot visibility',
+            placement: 'top',
+            animation: 'fade',
+            theme: 'light',
+        });
+
+        // Toggle plot visibility
+        document.getElementById('plot-toggle').addEventListener('click', function () {
+            const plotlyPlot = document.getElementById('plotly-plot');
+            const isVisible = plotlyPlot.style.display !== 'none';
+            plotlyPlot.style.display = isVisible ? 'none' : 'block';
+        });
+    });
+</script>
+{% endblock %}

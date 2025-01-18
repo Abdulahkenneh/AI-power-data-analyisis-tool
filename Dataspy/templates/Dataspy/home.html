@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <div class="hero-section text-center py-5 bg-primary text-white">
+        <div class="container">
+            <h1 class="display-4 font-weight-bold">Welcome to Data Insights Assistant</h1>
+            <p class="lead mt-3">Your one-stop solution for data-driven insights, interactive visualizations, and AI-powered analytics.</p>
+            <a href="#features" class="btn btn-light btn-lg mt-4">Get Started</a>
+        </div>
+    </div>
+
+{% load static %}
+{% static %}
+
+
+
+    <!-- Features Section -->
+    <section id="features" class="my-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="font-weight-bold">Our Features</h2>
+                <p class="text-muted">Explore powerful tools and insights designed to elevate your data experience.</p>
+            </div>
+
+            <div class="row">
+                <!-- Dashboard -->
+                <div class="col-md-4 mb-4">
+                  <a href="{% url 'Dataspy:spread_sheet' %}" class="tab-button">Dashboard</a>          <div class="feature-card card h-100 shadow-sm">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Dashboard</h3>
+                                <p class="card-text">Get an overview of your key performance indicators and latest trends.</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <!-- Data Query -->
+                <div class="col-md-4 mb-4">
+                    <a href="{% url 'data_query' %}" class="text-decoration-none text-dark">
+                        <div class="feature-card card h-100 shadow-sm">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Data Query</h3>
+                                <p class="card-text">Ask questions and explore insights with AI-driven query responses.</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <!-- Insights Generation -->
+                <div class="col-md-4 mb-4">
+                    <a href="{% url 'Dataspy:insights' %}" class="text-decoration-none text-dark">
+                        <div class="feature-card card h-100 shadow-sm">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Insights Generation</h3>
+                                <p class="card-text">Generate in-depth insights and natural language summaries from your data.</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Code Generation -->
+                <div class="col-md-4 mb-4">
+                    <a href="{% url 'Dataspy:code_generation' %}" class="text-decoration-none text-dark">
+                        <div class="feature-card card h-100 shadow-sm">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Code Generation</h3>
+                                <p class="card-text">Get code snippets for data manipulation and visualization, customized for you.</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <!-- Visualizations -->
+                <div class="col-md-4 mb-4">
+                    <a href="{% url 'Dataspy:visualizations' %}" class="text-decoration-none text-dark">
+                        <div class="feature-card card h-100 shadow-sm">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Visualizations</h3>
+                                <p class="card-text">Create interactive charts and graphs to visualize your data effortlessly.</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <!-- Reports -->
+                <div class="col-md-4 mb-4">
+                    <a href="{% url 'Dataspy:reports' %}" class="text-decoration-none text-dark">
+                        <div class="feature-card card h-100 shadow-sm">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Reports</h3>
+                                <p class="card-text">Generate comprehensive reports and export them for your analysis needs.</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Additional Features Section -->
+    <section class="my-5 bg-light py-5">
+        <div class="container">
+            <div class="row">
+                <!-- User Settings -->
+                <div class="col-md-6 mb-4">
+                    <a href="{% url 'Dataspy:user_settings' %}" class="text-decoration-none text-dark">
+                        <div class="feature-card card h-100 shadow-sm">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">User Settings</h3>
+                                <p class="card-text">Customize your experience with personal preferences and settings.</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <!-- Feedback & Community -->
+                <div class="col-md-6 mb-4">
+                    <a href="{% url 'Dataspy:feedback_community' %}" class="text-decoration-none text-dark">
+                        <div class="feature-card card h-100 shadow-sm">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Feedback & Community</h3>
+                                <p class="card-text">Engage with others, provide feedback, and share insights in our community.</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

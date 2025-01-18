@@ -1,0 +1,157 @@
+/* General Container Styling */
+.upload-container {
+    text-align: center;
+    padding: 40px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 80vw;
+    margin: 40px auto;
+}
+
+/* Title Styling */
+.upload-title {
+    font-size: 1.8em;
+    color: #343a40;
+    margin-bottom: 20px;
+}
+
+/* Upload Area Styling */
+.upload-area {
+    border: 2px dashed #007bff;
+    border-radius: 8px;
+    padding: 30px;
+    background-color: #e9ecef;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.upload-area:hover {
+    background-color: #f1f3f5;
+}
+
+.upload-instructions {
+    font-size: 1.1em;
+    color: #6c757d;
+}
+
+.upload-btn {
+    font-size: 1em;
+    padding: 10px 20px;
+    color: #ffffff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.upload-btn:hover {
+    background-color: #0056b3;
+}
+
+/* File Input Styling */
+.file-input {
+    display: none;
+}
+
+/* URL Input Field Styling */
+.url-input-container {
+    margin-top: 20px;
+}
+
+.url-label {
+    display: block;
+    font-size: 1em;
+    color: #343a40;
+    margin-bottom: 5px;
+}
+
+.url-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    transition: border-color 0.3s ease;
+}
+
+.url-input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Submit Button Styling */
+.submit-btn {
+    font-size: 1.1em;
+    margin-top: 5px;
+    padding: 12px 25px;
+    color: #ffffff;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: #218838;
+}
+
+/* Accepted Formats Note */
+.upload-note {
+    font-size: 0.9em;
+    color: #6c757d;
+}
+
+
+.glowing-btn {
+    display: inline-block;
+    color: #fff;
+    text-decoration: none;
+    background-color: #1e90ff; /* Dodger Blue */
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.glowing-btn:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, #ff007f, #ffbf00, #1e90ff);
+    z-index: -1;
+    filter: blur(15px);
+    opacity: 0.8;
+    animation: glowing 3s infinite alternate;
+}
+
+.glowing-btn:hover {
+    transform: scale(1.05); /* Slight zoom on hover */
+    background-color: #0066cc; /* Darker shade on hover */
+}
+
+@keyframes glowing {
+    0% {
+        box-shadow: 0 0 20px #ff007f, 0 0 40px #ff007f, 0 0 60px #ff007f;
+    }
+    50% {
+        box-shadow: 0 0 20px #ffbf00, 0 0 40px #ffbf00, 0 0 60px #ffbf00;
+    }
+    100% {
+        box-shadow: 0 0 20px #1e90ff, 0 0 40px #1e90ff, 0 0 60px #1e90ff;
+    }
+}
+
+
+

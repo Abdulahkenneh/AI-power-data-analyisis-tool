@@ -1,0 +1,456 @@
+<!-- templates/sections/reports.html -->
+{% extends 'Dataspy/userprofile.html' %}
+{% load static %}
+{% block section %}
+
+    <!-- Main Section -->
+ 
+        <!-- Introduction -->
+        <section id="intro" class="section-style">
+            <h2>Data Analysis Report</h2>
+            <p>An in-depth report generated from your data to help you make informed, data-driven decisions.</p>
+            <button id="generateReportBtn">Generate Report</button>
+        </section>
+
+        <!-- Report Generation Options -->
+        <section id="report-options" class="section-style">
+            <h3>Select Report Type</h3>
+            <form action="" method="post">
+                {% csrf_token %}
+                <label for="reportType">Choose Report Type:</label>
+                <select id="reportType" name="report_type">
+                    <option value="summary">Summary Report</option>
+                    <option value="detailed">Detailed Report</option>
+                    <option value="custom">Custom Report</option>
+                </select>
+                <button type="submit">Generate</button>
+            </form>
+        </section>
+
+        <!-- Navigation for Report Sections -->
+        <aside id="report-sections" class="section-style">
+            <h4>Report Sections</h4>
+            <ul>
+                <li onclick="showSection('executive-summary')">1. Executive Summary</li>
+                <li onclick="showSection('data-overview')">2. Data Overview</li>
+                <li onclick="showSection('data-preparation')">3. Data Preparation</li>
+                <li onclick="showSection('exploratory-analysis')">4. Exploratory Data Analysis</li>
+                <li onclick="showSection('statistical-analysis')">5. Statistical Analysis</li>
+                <li onclick="showSection('data-visualizations')">6. Data Visualizations</li>
+                <li onclick="showSection('key-findings')">7. Key Findings</li>
+                <li onclick="showSection('recommendations')">8. Recommendations</li>
+                <li onclick="showSection('appendix')">9. Appendix</li>
+            </ul>
+        </aside>
+
+        <!-- Dynamic Report Content -->
+        <section id="report-content" class="section-style">
+
+            <!-- 1. Executive Summary -->
+            <div id="executive-summary" class="report-section-content">
+                <h3>Executive Summary</h3>
+                <p>This section provides a high-level summary of the data, the analysis performed, and the main insights.</p>
+                <p><strong>Objective:</strong> Outline the main purpose of the analysis.</p>
+                <p><strong>Methodology:</strong> Brief description of the approach taken (e.g., statistical analysis, EDA, machine learning).</p>
+                <p><strong>Main Insights:</strong> Key takeaways from the analysis.</p>
+            </div>
+
+            <!-- 2. Data Overview -->
+            <div id="data-overview" class="report-section-content">
+                <h3>Data Overview</h3>
+                <p>Details about the dataset used, including the source, time range, and key attributes.</p>
+                {% if data_overview %}
+                    <ul>
+                        <li><strong>Total Records:</strong> {{ data_overview.total_records }}</li>
+                        <li><strong>Columns:</strong> {{ data_overview.columns_count }}</li>
+                        <li><strong>Missing Values:</strong> {{ data_overview.missing_values }}</li>
+                        <li><strong>Data Types:</strong> {{ data_overview.data_types }}</li>
+                    </ul>
+                {% endif %}
+            </div>
+
+            <!-- 3. Data Preparation -->
+            <div id="data-preparation" class="report-section-content">
+                <h3>Data Preparation</h3>
+                <p>Overview of the data cleaning and preprocessing steps applied to prepare the data for analysis.</p>
+                <ul>
+                    <li><strong>Handling Missing Data:</strong> Describe the method used (e.g., removal, imputation).</li>
+                    <li><strong>Data Type Adjustments:</strong> Corrections made to data types for analysis.</li>
+                    <li><strong>Outliers:</strong> Methods used for outlier detection and handling.</li>
+                    <li><strong>Data Transformation:</strong> Any transformations applied, such as scaling or encoding.</li>
+                </ul>
+            </div>
+
+            <!-- 4. Exploratory Data Analysis (EDA) -->
+            <div id="exploratory-analysis" class="report-section-content">
+                <h3>Exploratory Data Analysis</h3>
+                <p>Summary of initial findings from data exploration, including patterns and anomalies.</p>
+                {% if eda %}
+                    <ul>
+                        <li><strong>Distribution Analysis:</strong> Distribution of key variables.</li>
+                        <li><strong>Correlation Analysis:</strong> Insights from correlation among variables.</li>
+                        <li><strong>Trends and Patterns:</strong> Initial observations from the data.</li>
+                    </ul>
+                {% endif %}
+            </div>
+
+            <!-- 5. Statistical Analysis -->
+            <div id="statistical-analysis" class="report-section-content">
+                <h3>Statistical Analysis</h3>
+                <p>Detailed results of statistical tests or models applied to understand data relationships.</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mean</td>
+                            <td>{{ statistical_analysis.mean }}</td>
+                        </tr>
+                        <tr>
+                            <td>Median</td>
+                            <td>{{ statistical_analysis.median }}</td>
+                        </tr>
+                        <tr>
+                            <td>Standard Deviation</td>
+                            <td>{{ statistical_analysis.std_dev }}</td>
+                        </tr>
+                        <!-- Additional metrics can be added here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 6. Data Visualizations -->
+            <div id="data-visualizations" class="report-section-content">
+                <h3>Data Visualizations</h3>
+                <p>Visual representations of key insights from the data, including charts and graphs.</p>
+                {% if visualizations %}
+                    <div class="chart-container">
+                        {% for visualization in visualizations %}
+                            <img src="{{ visualization.url }}" alt="{{ visualization.title }}" class="chart-img">
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- 7. Key Findings -->
+            <div id="key-findings" class="report-section-content">
+                <h3>Key Findings</h3>
+                <p>Summary of significant insights discovered from the analysis, with data-backed evidence.</p>
+                <ul>
+                    <li>{{ findings.finding_1 }}</li>
+                    <li>{{ findings.finding_2 }}</li>
+                    <li>{{ findings.finding_3 }}</li>
+                </ul>
+            </div>
+
+            <!-- 8. Recommendations -->
+            <div id="recommendations" class="report-section-content">
+                <h3>Recommendations</h3>
+                <p>Data-driven suggestions based on findings that help guide business decisions.</p>
+                <ul>
+                    <li>{{ recommendations.recommendation_1 }}</li>
+                    <li>{{ recommendations.recommendation_2 }}</li>
+                </ul>
+            </div>
+
+            <!-- 9. Appendix -->
+            <div id="appendix" class="report-section-content">
+                <h3>Appendix</h3>
+                <p>Additional resources, references, and raw data details supporting the report.</p>
+                <ul>
+                    <li><strong>Data Dictionary:</strong> Description of each field in the dataset.</li>
+                    <li><strong>References:</strong> List of references used in the analysis.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Download Report Section -->
+        <section id="download-report" class="section-style">
+            <h3>Download Your Report</h3>
+            <p>Download a PDF version of the report for offline review and sharing.</p>
+            <form action="" method="get">
+                <button type="submit">Download Report</button>
+            </form>
+        </section>
+    
+
+    <style>
+        /* General Styles */
+
+        /* Section Style */
+        .section-style {
+            background-color: #f9f9f9;
+            padding: 1.5em;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #intro {
+            grid-column: 1 / -1;
+            text-align: center;
+        }
+
+        #report-sections ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        #report-sections ul li {
+            cursor: pointer;
+            padding: 0.5em 1em;
+            background: #e8f0fe;
+            margin: 0.5em 0;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        #report-sections ul li:hover {
+            background-color: #c9e6ff;
+        }
+
+        /* Report Content */
+        .report-section-content {
+            display: none;
+            padding: 1em 0;
+        }
+
+        .chart-container {
+            display: flex;
+            gap: 1em;
+            flex-wrap: wrap;
+        }
+
+        .chart-img {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+
+    <script>
+        // Function to toggle report sections visibility
+        function showSection(sectionId) {
+            document.querySelectorAll('.report-section-content').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+        }
+    </script>
+
+{% endblock %}
+
+
+
+
+
+
+{% comment %} 
+
+{% block section %}
+<!-- Main Section -->
+
+    <!-- Introduction -->
+    <section id="intro" class="section-style">
+        <h2>Data Report</h2>
+        <p>Gain insights from your data with our comprehensive reporting tools.</p>
+        <button id="generateReportBtn">Generate Report</button>
+    </section>
+
+    <!-- Report Generation Options -->
+    <section id="report-options" class="section-style">
+        <h3>Select Report Type</h3>
+        <form action="" method="post">
+            {% csrf_token %}
+            <label for="reportType">Choose Report Type:</label>
+            <select id="reportType" name="report_type">
+                <option value="summary">Summary Report</option>
+                <option value="detailed">Detailed Report</option>
+                <option value="custom">Custom Report</option>
+            </select>
+            <button type="submit">Generate</button>
+        </form>
+    </section>
+
+    <!-- Navigation for Report Sections -->
+    <aside id="report-sections" class="section-style">
+        <h4>Report Sections</h4>
+        <ul>
+            <li onclick="showSection('overview')">1. Overview</li>
+            <li onclick="showSection('statistics')">2. Key Statistics</li>
+            <li onclick="showSection('visualizations')">3. Visualizations</li>
+            <li onclick="showSection('conclusions')">4. Conclusions</li>
+        </ul>
+    </aside>
+
+    <!-- Dynamic Report Content -->
+    <section id="report-content" class="section-style">
+        <div id="overview" class="report-section-content">
+            <h3>Overview</h3>
+            <p>Summary of your dataset, including total records, columns, and missing values.</p>
+            {% if overview %}
+                <ul>
+                    <li>Total Records: {{ overview.total_records }}</li>
+                    <li>Number of Columns: {{ overview.columns_count }}</li>
+                    <li>Missing Values: {{ overview.missing_values }}</li>
+                </ul>
+            {% else %}
+                <p>No data available.</p>
+            {% endif %}
+        </div>
+
+        <div id="statistics" class="report-section-content">
+            <h3>Key Statistics</h3>
+            <p>Explore the main statistics for each column, such as mean, median, and standard deviation.</p>
+            {% if statistics %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Column</th>
+                            <th>Mean</th>
+                            <th>Median</th>
+                            <th>Standard Deviation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in statistics %}
+                            <tr>
+                                <td>{{ stat.column }}</td>
+                                <td>{{ stat.mean }}</td>
+                                <td>{{ stat.median }}</td>
+                                <td>{{ stat.std_dev }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No statistics available.</p>
+            {% endif %}
+        </div>
+
+        <div id="visualizations" class="report-section-content">
+            <h3>Visualizations</h3>
+            <p>View charts and graphs that provide visual insights into your data.</p>
+            <!-- Placeholder for graphs or dynamic content -->
+            {% if visualizations %}
+                <div class="chart-container">
+                    {% for visualization in visualizations %}
+                        <img src="{{ visualization.url }}" alt="{{ visualization.title }}">
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No visualizations available.</p>
+            {% endif %}
+        </div>
+
+        <div id="conclusions" class="report-section-content">
+            <h3>Conclusions</h3>
+            <p>Final analysis and actionable insights based on the data review.</p>
+            <p>{{ conclusions }}</p>
+        </div>
+    </section>
+
+    <!-- Download Report Section -->
+    <section id="download-report" class="section-style">
+        <h3>Download Your Report</h3>
+        <p>Download a PDF version of the report for offline review and sharing.</p>
+        <form action="" method="get">
+            <button type="submit">Download Report</button>
+        </form>
+    </section>
+
+
+<style>
+
+    /* Section Style */
+    .section-style {
+        background-color: #f9f9f9;
+        padding: 1.5em;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    #intro {
+        grid-column: 1 / -1;
+        text-align: center;
+    }
+
+    #report-sections ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    #report-sections ul li {
+        cursor: pointer;
+        padding: 0.5em 1em;
+        background: #e8f0fe;
+        margin: 0.5em 0;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+
+    #report-sections ul li:hover {
+        background-color: #d0e1fb;
+    }
+
+    /* Report Section Content */
+    .report-section-content {
+        display: none;
+    }
+
+    .report-section-content.active {
+        display: block;
+    }
+
+    /* Table Styling */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1em;
+    }
+
+    th, td {
+        padding: 0.75em;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+    th {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    /* Buttons */
+    button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 0.5em 1em;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Chart Container */
+    .chart-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1em;
+    }
+
+    .chart-container img {
+        max-width: 100%;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+</style>
+{% endblock %}
+ {% endcomment %}

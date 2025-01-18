@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dataspy - AI Data Analysis Workspace</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+
+<style>
+
+    /* General reset and styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body and container */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: row;
+}
+
+/* Sidebar styling */
+.sidebar {
+    width: 250px;
+    background-color: #343a40;
+    color: white;
+    padding: 20px;
+    height: 100vh;
+}
+
+.sidebar h3 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar ul li {
+    margin: 10px 0;
+}
+
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.sidebar ul li a:hover {
+    background-color: #007bff;
+    padding-left: 10px;
+    border-radius: 5px;
+}
+
+.sidebar .user-info {
+    margin-top: 40px;
+    color: #ccc;
+}
+
+/* Main content area */
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.card {
+    background-color: white;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    font-size: 18px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-body ul {
+    list-style: none;
+}
+
+.file-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.file-list li button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.file-list li button:hover {
+    background-color: #0056b3;
+}
+
+.tool-list a {
+    display: block;
+    padding: 10px;
+    background-color: #f0f0f0;
+    margin: 10px 0;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+}
+
+.tool-list a:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Responsive design */
+@media screen and (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+    }
+
+    .main-content {
+        padding: 10px;
+    }
+}
+
+</style>
+
+</head>
+<body>
+
+    <div class="container">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <h3>Dataspy</h3>
+            <ul>
+                <li><a href="#">New Thread</a></li>
+                <li><a href="#">My Threads</a></li>
+                <li><a href="#">My Files</a></li>
+                <li><a href="#">My Workflows</a></li>
+                <li><a href="#">Explore Workflows</a></li>
+                <li><a href="#">Documentation</a></li>
+                <li><a href="#">Community Forums</a></li>
+                <li><a href="#">Model Labs</a></li>
+                <li><a href="#">Upgrade</a></li>
+                <li><a href="#">Create a Team</a></li>
+                <li><a href="#">Account & Billing</a></li>
+                <li><a href="#">Log Out</a></li>
+            </ul>
+            <div class="user-info">
+                <p>Welcome, Abdulah M. Kenneh</p>
+                <p>Status: Connected</p>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <div class="card">
+                <div class="card-header">
+                    <h4>AI-Generated Summary</h4>
+                </div>
+                <div class="card-body">
+                    <p>AI-generated summary here...</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h4>Uploaded Files</h4>
+                </div>
+                <div class="card-body">
+                    <p>What do you want to analyze today?</p>
+                    <ul class="file-list">
+                        <li>
+                            <strong>messy_IMDB_dataset.csv</strong> - 11.20 KB
+                            <button class="btn-analyze">Start Analysis</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h4>AI Tools</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="tool-list">
+                        <li><a href="#">Quick Visualization</a></li>
+                        <li><a href="#">Data Cleaner</a></li>
+                        <li><a href="#">Significance Testing</a></li>
+                        <li><a href="#">Time Series Analysis</a></li>
+                        <li><a href="#">Extract Tables from PDF</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

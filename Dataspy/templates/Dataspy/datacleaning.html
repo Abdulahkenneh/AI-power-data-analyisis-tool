@@ -1,0 +1,174 @@
+
+{% extends 'Dataspy/userprofile.html' %}
+{% load static %}
+{% block section %}
+    <!-- Main Section -->
+<div style="width:100%>
+        <!-- Introduction -->
+        <section id="intro" class="section-style">
+            <h2>Data Cleaning for Accurate Analysis</h2>
+            <p>Enhance your data quality to make informed, data-driven decisions.</p>
+            <button id="startCleaningBtn">Start Cleaning Data</button>
+        </section>
+
+<!--        &lt;!&ndash; Data Upload Section &ndash;&gt;-->
+<!--        <section id="data-upload" class="section-style">-->
+<!--            <h3>Upload Your Data</h3>-->
+<!--            <form action="" method="post" enctype="multipart/form-data">-->
+<!--                {% csrf_token %}-->
+<!--                <input type="file" name="data_file" accept=".csv, .xlsx, .json">-->
+<!--                <button type="submit">Upload Data</button>-->
+<!--            </form>-->
+<!--            <button onclick="useSampleData()">Use Sample Data</button>-->
+<!--        </section>-->
+
+        <!-- Stages Navigation -->
+        <aside id="stages" class="section-style">
+            <h4>Data Cleaning Steps</h4>
+            <ul>
+                <li onclick="showStage('preview')">1. Data Preview & Assessment</li>
+                <li onclick="showStage('missing')">2. Handle Missing Data</li>
+                <li onclick="showStage('data-type')">3. Data Type Corrections</li>
+                <li onclick="showStage('outliers')">4. Outlier Detection & Removal</li>
+                <li onclick="showStage('standardization')">5. Data Standardization</li>
+                <li onclick="showStage('encoding')">6. Data Encoding</li>
+            </ul>
+        </aside>
+
+        <!-- Dynamic Data Cleaning Stage Content -->
+        <section id="data-cleaning-stage" class="section-style">
+            <div id="preview" class="stage-content">
+                <h3>Data Preview & Assessment</h3>
+                <p>Here’s a preview of your data with basic statistics.</p>
+                {% if data_preview %}
+                    <table>
+                        <thead>
+                            <tr>
+                                {% for column in data_preview.columns %}
+                                    <th>{{ column }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in data_preview.rows %}
+                                <tr>
+                                    {% for cell in row %}
+                                        <td>{{ cell }}</td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>No data uploaded.</p>
+                {% endif %}
+            </div>
+            <!-- Additional stages can be added similarly -->
+        </section>
+
+        <!-- Summary and Download Section -->
+        <section id="summary" class="section-style">
+            <h3>Cleaning Summary</h3>
+            <p>Your data is ready! Download below.</p>
+            <form action="" method="get">
+                <button type="submit">Download Cleaned Data</button>
+            </form>
+        </section>
+
+        <!-- Premium Features Section -->
+        <section id="premium-features" class="section-style premium-section">
+            <h3>Upgrade to Access Premium Tools</h3>
+            <p>Unlock advanced data cleaning features for in-depth analysis.</p>
+            <a href="#"><button>Unlock Advanced Features</button></a>
+        </section>
+
+</div>
+    <style>
+        /* General Styles */
+        * {
+            box-sizing: border-box;
+        }
+
+
+        /* Section Style */
+        .section-style {
+            background-color: #f9f9f9;
+            padding: 1.5em;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #intro {
+            grid-column: 1 / -1;
+            text-align: center;
+        }
+
+        #stages ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        #stages ul li {
+            cursor: pointer;
+            padding: 0.5em 1em;
+            background: #e8f0fe;
+            margin: 0.5em 0;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        #stages ul li:hover {
+            background-color: #d0e1fb;
+        }
+
+        /* Stage Content */
+        .stage-content {
+            display: none;
+        }
+
+        .stage-content.active {
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1em;
+        }
+
+        th, td {
+            padding: 0.75em;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        /* Buttons */
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 0.5em 1em;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Premium Section */
+        .premium-section {
+            background-color: #fff3e0;
+            color: #d35400;
+            border: 1px solid #e67e22;
+            text-align: center;
+        }
+
+    </style>
+{% endblock %}

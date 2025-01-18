@@ -1,0 +1,421 @@
+
+{% extends 'Dataspy/base.html' %}
+
+{% load static %}
+
+{% block content %}
+<style>
+a{
+        text-decoration:none;
+    }
+
+
+    /* Hero Section Styling */
+    .hero-section {
+        position: relative;
+        background-image: url('https://example.com/your-ai-background-image.jpg'); /* Replace with an appropriate image URL */
+        background-size: cover;
+        background-position: center;
+        background-blend-mode: overlay;
+        color: #ffffff;
+        padding: 80px 20px;
+        text-align: center;
+    }
+
+    /* Adding overlay for better text readability */
+    .hero-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5); /* Dark overlay */
+        z-index: 1;
+    }
+
+    .hero-section .container {
+        position: relative;
+        z-index: 2; /* Ensures the text is above the overlay */
+    }
+
+    .hero-title {
+        font-size: 3em;
+        font-weight: 700;
+        font-family: 'Playfair Display', serif;
+        margin-bottom: 20px;
+        color: #ffffff;
+        letter-spacing: 2px;
+    }
+
+    .hero-title .highlight {
+        color: #ffde59;
+        font-style: italic;
+    }
+
+    .hero-subtitle {
+        font-size: 1.5em;
+        font-family: 'Montserrat', sans-serif;
+        margin: 20px 0;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hero-subtitle .highlight {
+        color: #ffde59;
+        font-weight: 700;
+    }
+
+    .hero-subtitle .emphasis {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+        font-style: italic;
+        font-weight: 600;
+    }
+
+    .btn {
+        font-size: 1.2em;
+        padding: 12px 30px;
+        border-radius: 30px;
+        font-weight: 600;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .btn:hover {
+        background-color: #ffde59;
+        color: #0056b3;
+    }
+        .feature-link {
+        text-decoration:none;
+        color: inherit;
+    }
+
+    .feature-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+ /* Scroll container styling */
+        .scroll-container {
+            display: flex;
+            overflow: hidden;
+            position: relative;
+            width: 100vw%;
+            height: 140px;
+            background-color: #ffffff;
+            padding: 10px 0;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Tool card styling */
+        .tool-card {
+            flex: none;
+            width: 200px;
+            height: 120px;
+            margin: 0 12px;
+            background: linear-gradient(135deg, #3b82f6, #6366f1); /* Modern blue gradient */
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        /* Hover effect */
+        .tool-card:hover {
+            transform: scale(1.08);
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+        }
+
+        .tool-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .tool-description {
+            font-size: 0.8rem;
+            line-height: 1.4;
+            padding: 0 10px;
+        }
+
+
+</style>
+<script src="https://unpkg.com/tabulator-tables@5.4.4/dist/js/tabulator.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<!-- Hero Section -->
+<div class="hero-section text-center py-5 bg-primary text-white">
+    <div class="container">
+        <h1 class="hero-title">Unlock the Power of Your Data with AI</h1>
+        <p class="hero-subtitle">
+            Instantly chat with your files and discover <span class="highlight emphasis">actionable insights</span> in seconds.
+            Let AI do the heavy lifting for you and make smarter decisions faster.
+        </p>
+      <a href="{% url 'Dataspy:userprofile' %}" class="btn btn-light btn-lg mt-4 glowing-btn">
+    Start Analyzing for Free Now
+</a>
+    </div>
+</div>
+
+{% for video in videos %}
+
+    <video autoplay muted loop playsinline
+           style="width: 100%; height: 60vh; object-fit: cover; border: none; box-shadow: none; pointer-events: none;"
+           disablepictureinpicture>
+        <source src="{{ video.video_file.url }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+{% endfor %}
+
+
+
+<div class="upload-container">
+    <h2 class="upload-title">Upload Your Dataset</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+<div class="upload-area" id="uploadArea">
+    <input type="file" id="fileInput" name="uploaded_files" class="file-input" multiple accept=".csv, .xls, .xlsx, .json" />
+    <label for="fileInput" class="upload-label">
+        <i class="fas fa-cloud-upload-alt"></i> Drag & Drop or Browse
+    </label>
+    <p class="upload-note">Accepted formats: .csv, .xls, .xlsx, .json</p>
+    <div class="file-name-display" id="fileNameDisplay"></div> <!-- File name will be displayed here -->
+</div>
+
+
+
+        <!-- Submit Button -->
+        <button type="submit" class="submit-btn">Submit</button>
+    </form>
+</div>
+
+
+
+
+<!-- Features Section -->
+<div class="container my-5">
+    <div class="row text-center">
+        <!-- Dashboard -->
+        <div class="col-md-4 mb-4">
+            <a href="{% url 'Dataspy:spread_sheet' %}" class="feature-link" style='text-decoration:none;'>
+                <div class="feature-card p-4 bg-light">
+                    <i class="fas fa-tachometer-alt fa-3x mb-3"></i> <!-- Dashboard Icon -->
+                    <h3>Dashboard</h3>
+                    <p>Get an overview of your key performance indicators and latest trends.</p>
+                </div>
+            </a>
+        </div>
+        <!-- Data Query -->
+        <div class="col-md-4 mb-4">
+            <a href="{% url 'Dataspy:data_query' %}" class="feature-link" style='text-decoration:none;'>
+                <div class="feature-card p-4 bg-light">
+                    <i class="fas fa-search fa-3x mb-3"></i> <!-- Search Icon -->
+                    <h3>Data Query</h3>
+                    <p>Ask questions and explore insights with AI-driven query responses.</p>
+                </div>
+            </a>
+        </div>
+        <!-- Insights Generation -->
+        <div class="col-md-4 mb-4">
+            <a href="{% url 'Dataspy:insights' %}" class="feature-link" style='text-decoration:none;'>
+                <div class="feature-card p-4 bg-light">
+                    <i class="fas fa-lightbulb fa-3x mb-3"></i> <!-- Lightbulb Icon -->
+                    <h3>Insights Generation</h3>
+                    <p>Generate in-depth insights and natural language summaries from your data.</p>
+                </div>
+            </a>
+        </div>
+        <!-- Code Generation -->
+        <div class="col-md-4 mb-4">
+            <a href="{% url 'Dataspy:code_generation' %}" class="feature-link" style='text-decoration:none;'>
+                <div class="feature-card p-4 bg-light">
+                    <i class="fas fa-code fa-3x mb-3"></i> <!-- Code Icon -->
+                    <h3>Code Generation</h3>
+                    <p>Get code snippets for data manipulation and visualization, customized for you.</p>
+                </div>
+            </a>
+        </div>
+        <!-- Visualizations -->
+        <div class="col-md-4 mb-4">
+            <a href="{% url 'Dataspy:visualizations' %}" class="feature-link" style='text-decoration:none;'>
+                <div class="feature-card p-4 bg-light">
+                    <i class="fas fa-chart-line fa-3x mb-3"></i> <!-- Chart Line Icon -->
+                    <h3>Visualizations</h3>
+                    <p>Create interactive charts and graphs to visualize your data effortlessly.</p>
+                </div>
+            </a>
+        </div>
+        <!-- Reports -->
+        <div class="col-md-4 mb-4">
+            <a href="{% url 'Dataspy:reports' %}" class="feature-link" style='text-decoration:none;'>
+                <div class="feature-card p-4 bg-light">
+                    <i class="fas fa-file-alt fa-3x mb-3"></i> <!-- File Icon -->
+                    <h3>Reports</h3>
+                    <p>Generate comprehensive reports and export them for your analysis needs.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+      <div class="scroll-container">
+        <div class="tool-card">
+            <div class="tool-name">OpenAI GPT</div>
+            <div class="tool-description">Advanced AI for generating human-like text and insights.</div>
+        </div>
+        <div class="tool-card">
+            <div class="tool-name">Trifacta</div>
+            <div class="tool-description">Effortless data cleaning and preparation for analytics.</div>
+        </div>
+        <div class="tool-card">
+            <div class="tool-name">Talend</div>
+            <div class="tool-description">Comprehensive platform for data integration and management.</div>
+        </div>
+        <div class="tool-card">
+            <div class="tool-name">OpenRefine</div>
+            <div class="tool-description">Tool for cleaning, transforming, and organizing complex data.</div>
+        </div>
+
+        <div class="tool-card">
+            <div class="tool-name">Pandas</div>
+            <div class="tool-description">Powerful Python library for data analysis and manipulation.</div>
+        </div>
+        <div class="tool-card">
+            <div class="tool-name">DataRobot</div>
+            <div class="tool-description">Automated machine learning for predictive insights.</div>
+        </div>
+        <div class="tool-card">
+            <div class="tool-name">OpenRefine</div>
+            <div class="tool-description">Tool for cleaning, transforming, and organizing complex data.</div>
+        </div>
+    </div>
+
+
+
+
+
+    <div id="example-table"></div>
+
+
+
+</div>
+<script>
+    var tableData = {{ table_json|escapejs }};
+  var table = new Tabulator("#example-table",{
+    data:tableData,
+    layout:"fitColumns",
+    responsiveLayout:"hide",
+    addRowPos:"top",
+    history:true,             //allow undo and redo actions on the table
+    pagination:"local",       //paginate the data
+    paginationSize:7,         //allow 7 rows per page of data
+    paginationCounter:"rows", //display count of paginated rows in footer
+    movableColumns:true,      //allow column order to be changed
+    initialSort:[             //set the initial sort order of the data
+        {column:"name", dir:"asc"},
+    ],
+    columnDefaults:{
+        tooltip:true,         //show tool tips on cells
+    },
+    columns:[                 //define the table columns
+        {title:"Name", field:"name", editor:"input"},
+        {title:"Task Progress", field:"progress", hozAlign:"left", formatter:"progress", editor:true},
+        {title:"Gender", field:"gender", width:95, editor:"select", editorParams:{values:["male", "female"]}},
+        {title:"Rating", field:"rating", formatter:"star", hozAlign:"center", width:100, editor:true},
+        {title:"Color", field:"col", width:130, editor:"input"},
+        {title:"Date Of Birth", field:"dob", width:130, sorter:"date", hozAlign:"center"},
+        {title:"Driver", field:"car", width:90,  hozAlign:"center", formatter:"tickCross", sorter:"boolean", editor:true},
+    ],
+});
+
+</script>
+
+
+    <script>
+
+window.addEventListener("load", function() {
+    const loader = document.getElementById("loader");
+    loader.style.display = "none"; // Hide the loader
+});
+        const container = document.querySelector('.scroll-container');
+
+        function startScroll() {
+            const scrollSpeed = .5; // Scrolling speed
+            let scrollPosition = 0;
+
+            function loopScroll() {
+                scrollPosition += scrollSpeed;
+                container.scrollLeft = scrollPosition;
+
+                const firstCard = container.firstElementChild;
+                const firstCardWidth = firstCard.offsetWidth;
+
+                // Check if the first card is out of view
+                if (firstCard.getBoundingClientRect().right <= container.getBoundingClientRect().left) {
+                    container.appendChild(firstCard); // Move the first card to the end
+                    scrollPosition -= firstCardWidth; // Adjust scroll position precisely
+                }
+
+                requestAnimationFrame(loopScroll);
+            }
+
+            loopScroll();
+        }
+
+        // Start scrolling when the DOM is ready
+        document.addEventListener('DOMContentLoaded', startScroll);
+
+
+    </script>
+
+
+    <script>
+    // Handle file selection or drag-and-drop
+    const fileInput = document.getElementById('fileInput');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+
+    fileInput.addEventListener('change', function () {
+        const fileNames = Array.from(fileInput.files).map(file => file.name).join(', ');
+        fileNameDisplay.textContent = fileNames || 'No file selected';
+    });
+
+    // Handle drag and drop
+    const uploadArea = document.getElementById('uploadArea');
+
+    uploadArea.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        uploadArea.style.backgroundColor = '#e9ecef';
+    });
+
+    uploadArea.addEventListener('dragleave', function () {
+        uploadArea.style.backgroundColor = '#f8f9fa';
+    });
+
+    uploadArea.addEventListener('drop', function (e) {
+        e.preventDefault();
+        uploadArea.style.backgroundColor = '#f8f9fa';
+
+        const files = e.dataTransfer.files;
+        fileInput.files = files;  // Set the files to the input
+        const fileNames = Array.from(files).map(file => file.name).join(', ');
+        fileNameDisplay.textContent = fileNames;
+    });
+</script>
+
+{% endblock %}

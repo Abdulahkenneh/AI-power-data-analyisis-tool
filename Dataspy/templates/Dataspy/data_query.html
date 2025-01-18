@@ -1,0 +1,561 @@
+{% extends 'Dataspy/userprofile.html' %}
+{% load static %}
+
+{% block section %}
+<style>
+    /* Base Styles */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f0f4f8;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        height: 100vh;
+        transition: background-color 0.3s ease;
+    }
+
+    .chat-container {
+        width: 100%;
+        max-width: 900px;
+        margin: 20px auto;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        overflow-y: auto;
+        max-height: calc(100vh - 150px);
+        scroll-behavior: smooth;
+        animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .message {
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        background-color: #f9f9f9;
+        transition: all 0.3s ease;
+    }
+
+    .message:hover {
+        transform: scale(1.03);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-message {
+        background: linear-gradient(135deg, #e3f2fd, #64b5f6);
+        text-align: right;
+        margin-left: auto;
+        animation: slideInRight 0.5s ease;
+    }
+
+    @keyframes slideInRight {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    .chatgpt-message {
+        background: linear-gradient(135deg, #ede7f6, #9fa8da);
+        text-align: left;
+        margin-right: auto;
+        animation: slideInLeft 0.5s ease;
+    }
+
+    @keyframes slideInLeft {
+        from { transform: translateX(-100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    .error-log {
+        margin-top: 10px;
+        padding: 15px;
+        border-left: 5px solid #e53935;
+        background-color: #ffebee;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        word-wrap: break-word;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 1s ease-out;
+    }
+
+    .input-container {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-40%);
+        width: 100%;
+        max-width: 900px;
+        background-color: #ffffff;
+        display: flex;
+        gap: 15px;
+        padding: 12px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        height:20px;
+    }
+
+    .input-box {
+        flex-grow: 1;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+        height:20px;
+
+    }
+
+    .input-box:focus {
+        outline: none;
+        border-color: blue;
+        color:white;
+    }
+
+    .send-button {
+
+        background-color: #4caf50;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        height:30px;
+        text-align:center;
+
+
+    }
+
+    .send-button:hover {
+        background-color: #45a049;
+        transform: scale(1.05);
+    }
+
+    .send-button:focus {
+        outline: none;
+        box-shadow: 0 0 8px rgba(0, 200, 0, 0.5);
+    }
+
+    /* Table and Plot Styling */
+    .table-wrapper, .plot-wrapper {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 1s ease-out;
+    }
+
+    .plot-wrapper img {
+        max-width: 100%;
+        border-radius: 8px;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+        border-radius: 8px;
+    }
+
+    .table-wrapper table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table-wrapper th, .table-wrapper td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        text-align: left;
+        font-size: 1rem;
+    }
+</style>
+
+
+
+<!--    <div>-->
+<!--        {% for message in messages %}-->
+<!--            <div style="border: 1px solid #ddd; padding: 10px; margin-bottom: 10px;">-->
+<!--                <pre>{{ message.user_request|safe }}</pre>-->
+<!--                {% if message.ai_response|safe %}-->
+<!--                <p><strong>Explaination:</strong></p>-->
+<!--                <p>{{message.ai_response}}</p>-->
+<!--                {% if message.code %}-->
+<!--                <pre>{{ message.code }}</pre>-->
+<!--                {% endif %}-->
+<!--                {% endif %}-->
+
+<!--            </div>-->
+<!--        {% endfor %}-->
+<!--        <p><strong>Timestamp:</strong> {{ message.timestamp }}</p>-->
+<!--    </div>-->
+
+
+
+
+
+
+<div class="chat-container">
+    {% for message in messages %}
+        <div class="message {% if message.user == 'user' %}user-message{% else %}chatgpt-message{% endif %}">
+            <p>{{ message.text|safe }}</p>
+            {% if ai_generated_code %}
+                <div class="error-log">
+                    <h4>Let's run this code</h4>
+                    <pre><code class="python">{{ ai_generated_code }}</code></pre>
+                </div>
+            {% endif %}
+            {% for error in usererrors|slice:":1" %}
+                {% if error.ai_response %}
+                    <p>{{ error.ai_response|safe }}</p>
+                {% endif %}
+                {% if error.error_message %}
+                    <div class="error-log">
+                        <h4>Error Message:</h4>
+                        <p>{{ error.error_message|safe }}</p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <small>{{ message.timestamp }}</small>
+            {% if message.graph %}
+                <img src="{{ message.graph.url }}" alt="Generated Plot" loading="lazy">
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    {% if plot_image_base64 %}
+        <img src="data:image/png;base64,{{ plot_image_base64 }}" alt="Generated Plot" loading="lazy"/>
+    {% endif %}
+
+    {% if plot_image %}
+        <div class="plot-wrapper">
+            <h3>Generated Plot:</h3>
+            <img src="{{ plot_image.url }}" alt="Generated Plot" loading="lazy">
+        </div>
+    {% endif %}
+</div>
+
+{% if dataframe %}
+    <div class="table-wrapper">
+        <h3>DataFrame View:</h3>
+        {{ dataframe|safe }}
+    </div>
+{% endif %}
+
+<form id="chat-form" class="input-container" method="POST" action="{% url 'Dataspy:data_query' %}">
+    {% csrf_token %}
+    <input type="text" id="user-input" class="input-box" name="prompt" placeholder="Type your request" required aria-label="User Input"/>
+    <button type="submit" id="send-button" class="send-button">Send</button>
+</form>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/styles/monokai.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js"></script>
+<script>
+    hljs.highlightAll();
+</script>
+
+
+
+
+
+
+
+<script>
+    $(document).ready(function () {
+        // Poll backend for updates
+        const taskId = "{{ task_id|default:'' }}";
+        if (taskId) {
+            const taskStatusInterval = setInterval(() => {
+                $.get(`/api/task-status/${taskId}/`, function (response) {
+                    if (response.status === 'SUCCESS') {
+                        $('#task-status').text('Completed');
+                        $('#typed-content').text(response.result);
+                        $('#task-result').show();
+                        clearInterval(taskStatusInterval);
+                    } else if (response.status === 'FAILURE') {
+                        $('#task-status').text('Failed');
+                        $('#typed-content').text('Error processing your task.');
+                        $('#task-result').show();
+                        clearInterval(taskStatusInterval);
+                    } else {
+                        $('#task-status').text(response.status);
+                    }
+                }).fail(function () {
+                    console.error('Error fetching task status.');
+                });
+            }, 3000);
+        }
+    });
+</script>
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% extends 'Dataspy/userprofile.html' %}
+{% load static %}
+
+{% block section %}
+<style>
+    /* General Container Styles */
+    .chat-container {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .message {
+        padding: 15px 20px;
+        border-radius: 8px;
+        font-size: 1rem;
+        line-height: 1.6;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .user-message {
+        background: linear-gradient(90deg, #64b5f6, #1e88e5);
+        color: white;
+        text-align: right;
+        margin-left: auto;
+        border-top-right-radius: 0;
+    }
+
+    .chatgpt-message {
+        background: linear-gradient(90deg, #9fa8da, #7986cb);
+        color: white;
+        text-align: left;
+        margin-right: auto;
+        border-top-left-radius: 0;
+    }
+
+    .task-status-container {
+        margin-top: 20px;
+        padding: 20px;
+        background-color: #fff8e1;
+        border-left: 5px solid #ffc107;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        color: #ff8f00;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .task-result {
+        margin-top: 10px;
+        padding: 15px;
+        background-color: #e8f5e9;
+        border-left: 5px solid #66bb6a;
+        border-radius: 8px;
+        color: #388e3c;
+    }
+
+    .input-container {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .input-box {
+        flex-grow: 1;
+        padding: 10px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+    }
+
+    .send-button {
+        padding: 10px 20px;
+        background: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+        .input-container {
+            flex-direction: column;
+        }
+    }
+
+    pre code {
+        background-color: #f5f5f5;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 1rem;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+
+    .user-request {
+        text-align: right;
+        font-weight: bold;
+    }
+
+    .ai-response {
+        text-align: left;
+    }
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+
+<!-- Task Status Section -->
+<div id="task-status-container" class="task-status-container" style="display: none;">
+    <p>Task Status: <span id="task-status">Checking...</span></p>
+    <div id="task-result" class="task-result" style="display: none;">
+        <p id="typed-content"></p>
+    </div>
+</div>
+
+<div id="update">
+</div>
+<div class="chat-container" id="chat-container">
+    {% for message in messages %}
+        <div class="message" id="message-{{ message.id }}">
+            <div class="user-message">
+                <p class="message-text">{{ message.user_request|safe }}</p>
+            </div>
+
+            {% if message.ai_response|safe and not message.code %}
+                <div class="chatgpt-message">
+                    <p>{{ message.ai_response }}</p>
+                </div>
+            {% else %}
+                <div class="ai-response">
+                    <p><strong>Let's run this code:</strong></p>
+                    <pre class="language-python line-numbers"><code>{{ message.code }}</code></pre>
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+
+
+{% if plot_image_base64 %}
+    <img src="data:image/png;base64,{{ plot_image_base64 }}" alt="Generated Plot" />
+{% else %}
+    <p>No plot generated yet.</p>
+{% endif %}
+
+<form id="chat-form" class="input-container" method="POST" action="{% url 'Dataspy:data_query' %}">
+    {% csrf_token %}
+    <input type="text" id="user-input" class="input-box" name="prompt" placeholder="Type your request" required>
+    <button type="submit" class="send-button">Send</button>
+</form>
+
+<script>
+$(document).ready(function () {
+    setInterval(function () {
+        $.ajax({
+            type: 'GET',
+            url: "{% url 'Dataspy:update' %}",  // Ensure this URL is correct for fetching new messages
+            cache: false,
+            success: function (response) {
+                console.log(response);
+
+                // Loop through the new messages
+                response.messages.forEach(function (message) {
+                    // Create the message container dynamically
+                    var messageHtml = '<div class="message" id="message-' + message.id + '">';
+
+                    // User message
+                    messageHtml += '<div class="user-message"><p class="message-text">' + message.user_request + '</p></div>';
+
+                    // AI response (if exists)
+                    if (message.ai_response && !message.code) {
+                        messageHtml += '<div class="chatgpt-message"><p>' + message.ai_response + '</p></div>';
+                    } else if (message.code) {
+                        // If there's code, display it
+                        messageHtml += '<div class="ai-response"><p><strong>Let\'s run this code:</strong></p><pre class="language-python line-numbers"><code>' + message.code + '</code></pre></div>';
+                    }
+
+                    messageHtml += '</div>'; // Close the message div
+
+                    // Append the new message to the chat container
+                    $("#chat-container").append(messageHtml);
+                });
+            },
+            error: function (response) {
+                console.error("Error occurred:", response);
+            }
+        });
+    }, 3000); // Adjust the interval to your preference (in milliseconds)
+});
+</script>
+<script>
+$(document).ready(function () {
+    setInterval(function () {
+        $.ajax({
+            type: 'GET',
+            url: "{% url 'Dataspy:update' %}",
+            cache: false,
+            success: function (response) {
+                $("#update").empty(); // Clear the existing content
+
+                console.log(response);
+
+                // Loop through the messages in the response
+                response.messages.forEach(function (message) {
+                console.log(response);
+                    var content = "<p>" + message.user_request + "</p>"; // Adjust field name as needed
+                    $("#update").append(content);
+                });
+            },
+            error: function (response) {
+                console.error("Error occurred:", response);
+            }
+        });
+    }, 2000); // Adjust the interval to 3 seconds
+});
+
+</script>
+
+{% endblock %}
+

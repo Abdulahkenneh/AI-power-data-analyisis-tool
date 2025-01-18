@@ -1,0 +1,114 @@
+<!-- templates/sections/insights.html -->
+{% extends 'Dataspy/userprofile.html' %}
+{% load static %}
+{% block section %}
+
+<div class="container my-4">
+    <h1>Insights Generation</h1>
+    <p class="text-muted">Generate insights and interpret data patterns automatically.</p>
+
+    <!-- Automated Insights Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Automated Insights</h5>
+        </div>
+        <div class="card-body">
+            {% comment %} {% url 'Dataspy:insights' %} {% endcomment %}
+            <form method="POST" action="">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="insight_context">Provide Context for Insights (optional)</label>
+                    <textarea class="form-control" id="insight_context" name="insight_context" rows="4" placeholder="Add any specific context for insights..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">Generate Insights</button>
+            </form>
+            <hr>
+            {% if generated_insights %}
+                <h5>Generated Insights:</h5>
+                <ul class="list-group mt-3">
+                    {% for insight in generated_insights %}
+                        <li class="list-group-item">{{ insight }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No insights generated yet. Submit to generate.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Anomaly Detection Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Anomaly Detection</h5>
+        </div>
+        <div class="card-body">
+            {% comment %} {% url 'Dataspy:detect_anomalies' %} {% endcomment %}
+            <form method="POST" action="">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="anomaly_column">Select Column for Anomaly Detection</label>
+                    <select class="form-control" id="anomaly_column" name="anomaly_column">
+                        <option value="">-- Select Column --</option>
+                        {% for column in columns %}
+                            <option value="{{ column }}">{{ column }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-danger mt-3">Detect Anomalies</button>
+            </form>
+            <hr>
+            {% if anomalies %}
+                <h5>Detected Anomalies:</h5>
+                <table class="table table-bordered table-hover mt-3">
+                    <thead>
+                        <tr>
+                            <th>Row Index</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for anomaly in anomalies %}
+                            <tr>
+                                <td>{{ anomaly.index }}</td>
+                                <td>{{ anomaly.value }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No anomalies detected yet. Run the detection process.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Key Metrics Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Key Metrics</h5>
+        </div>
+        <div class="card-body">
+            {% if key_metrics %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Mean</td><td>{{ key_metrics.mean }}</td></tr>
+                        <tr><td>Median</td><td>{{ key_metrics.median }}</td></tr>
+                        <tr><td>Standard Deviation</td><td>{{ key_metrics.std_dev }}</td></tr>
+                        <tr><td>Minimum</td><td>{{ key_metrics.min }}</td></tr>
+                        <tr><td>Maximum</td><td>{{ key_metrics.max }}</td></tr>
+                        <!-- Add more metrics as needed -->
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No key metrics available. Load data and generate insights first.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

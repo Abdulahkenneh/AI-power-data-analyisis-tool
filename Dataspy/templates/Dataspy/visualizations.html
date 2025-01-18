@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Visualizations</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        h1 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group textarea, .form-group button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .chart-container {
+            margin-top: 30px;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dynamic Data Visualizations</h1>
+
+        <!-- Dataset Upload Form -->
+        <div class="form-group">
+            <form id="uploadForm" method="POST" enctype="multipart/form-data">
+                <label for="dataset">Upload Dataset (CSV only):</label>
+                <input type="file" name="dataset" id="dataset" accept=".csv" required>
+                <button type="submit">Upload</button>
+            </form>
+        </div>
+
+        <!-- Visualization Command Form -->
+        <div class="form-group">
+            <form id="commandForm" method="POST">
+                <label for="command">Enter Visualization Command:</label>
+                <textarea name="command" id="command" rows="4" placeholder="e.g., visualize the age column"></textarea>
+                <button type="submit">Generate Visualization</button>
+            </form>
+        </div>
+
+        <!-- Chart Container -->
+        <div class="chart-container" id="chartContainer" style="display: none;">
+            <div id="chart"></div>
+        </div>
+    </div>
+
+    <script>
+        // Handle dataset upload
+        document.getElementById('uploadForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const response = await fetch("{% url 'Dataspy:visualizations' %}", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.json();
+            alert(result.message || result.error);
+        });
+
+        // Handle visualization command
+        document.getElementById('commandForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const command = document.getElementById('command').value;
+            const response = await fetch("{% url 'Dataspy:visualizations' %}", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'command': command
+                })
+            });
+
+            const result = await response.json();
+
+            // Display the chart or error
+            if (result.chart) {
+                document.getElementById('chartContainer').style.display = 'block';
+                Plotly.newPlot('chart', JSON.parse(result.chart).data, JSON.parse(result.chart).layout);
+            } else {
+                alert(result.error || "Something went wrong.");
+            }
+        });
+    </script>
+</body>
+</html>
